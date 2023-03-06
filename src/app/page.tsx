@@ -1,91 +1,95 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+"use client";
+import React, { useState } from "react";
 
-const inter = Inter({ subsets: ['latin'] })
+export default function Todo() {
+  const [todo, setTodo] = useState("");
+  const [todos, setTodos] = useState([
+    { todoText: "todo 1", completed: false },
+    { todoText: "todo 2", completed: true },
+    { todoText: "todo 3", completed: true },
+    { todoText: "todo 4", completed: false },
+  ]);
 
-export default function Home() {
+  const onClickHandler = (meraElm: any) => {
+    console.log("meraElm", meraElm);
+
+
+    const newTodos = todos.map((todo) => {
+      console.log("todo: ", todo);
+      if (todo.todoText == meraElm.todoText) {
+        todo.completed = !todo.completed; 
+      }
+      return todo;
+    });
+
+    console.log(newTodos);
+    setTodos(newTodos);
+  };
+  const addTodo = () => {
+    const newTodo = { todoText: todo, completed: false };
+    const newTodos = [...todos, newTodo];
+    setTodos(newTodos);
+    setTodo("");
+  };
+
+  const deleteTodo = (meraTodo: any) => {
+    const newTodos = todos.filter((todo) => {
+      if (todo.todoText == meraTodo.todoText) return false;
+      return true;
+    });
+    console.log("old todos", todos, "new todos", newTodos);
+    setTodos(newTodos);
+  };
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+    <>
+      <div style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>Todo</div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "10px" }}>
+        <input
+          style={{ padding: "10px", marginRight: "10px", borderRadius: "5px", border: "1px solid gray", flex: "1" }}
+          placeholder="add todo text"
+          value={todo}
+          onChange={(e) => {
+            setTodo(e.target.value);
+          }}
         />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
+        <button style={{ margin: "20px", padding: "10px", backgroundColor: "blue", color: "white", borderRadius: "5px", border: "none" }} onClick={addTodo}>Add</button>
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      <ul>
+        {todos.map((elm) => {
+          return (
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                color: elm.completed ? "green" : "orange",
+                fontStyle: "oblique",
+                listStyle: "none",
+              }}
+              key={elm.todoText}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <input
+                  type="checkbox"
+                  checked={elm.completed}
+                  onChange={() => {
+                    onClickHandler(elm);
+                  }}
+                />
+                <span style={{ marginLeft: "10px" }}>{elm.todoText}</span>
+              </div>
+              <button
+                style={{ margin: "10px", padding: "5px", backgroundColor: "red", color: "white", borderRadius: "5px", border: "none" }}
+                onClick={() => {
+                  deleteTodo(elm);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  );
 }
